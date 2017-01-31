@@ -21,19 +21,16 @@
 package org.zanata.email;
 
 import com.google.common.base.Optional;
-import com.googlecode.totallylazy.collections.PersistentMap;
-import lombok.RequiredArgsConstructor;
+import javaslang.collection.Map;
 import org.zanata.i18n.Messages;
 import org.zanata.util.HtmlUtil;
-
 import javax.mail.internet.InternetAddress;
-
 import static org.zanata.email.Addresses.getReplyTo;
 
 /**
-* @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
-*/
-@RequiredArgsConstructor
+ * @author Sean Flanigan
+ *         <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
+ */
 public class ContactAdminEmailStrategy extends EmailStrategy {
     private final String fromLoginName;
     private final String fromName;
@@ -53,21 +50,30 @@ public class ContactAdminEmailStrategy extends EmailStrategy {
 
     @Override
     public String getSubject(Messages msgs) {
-        return msgs.format("jsf.email.admin.SubjectPrefix",
-                fromLoginName) + " " + userSubject;
+        return msgs.format("jsf.email.admin.SubjectPrefix", fromLoginName) + " "
+                + userSubject;
     }
 
     @Override
-    public PersistentMap<String, Object> makeContext(
-            PersistentMap<String, Object> genericContext,
+    public Map<String, Object> makeContext(Map<String, Object> genericContext,
             InternetAddress[] toAddresses) {
-        PersistentMap<String, Object> context = super.makeContext(
-                genericContext, toAddresses);
+        Map<String, Object> context =
+                super.makeContext(genericContext, toAddresses);
         String safeHTML = HtmlUtil.SANITIZER.sanitize(htmlMessage);
-        return context
-                .insert("fromLoginName", fromLoginName)
-                .insert("fromName", fromName)
-                .insert("replyEmail", replyEmail)
-                .insert("htmlMessage", safeHTML);
+        return context.put("fromLoginName", fromLoginName)
+                .put("fromName", fromName).put("replyEmail", replyEmail)
+                .put("htmlMessage", safeHTML);
+    }
+
+    @java.beans.ConstructorProperties({ "fromLoginName", "fromName",
+            "replyEmail", "userSubject", "htmlMessage" })
+    public ContactAdminEmailStrategy(final String fromLoginName,
+            final String fromName, final String replyEmail,
+            final String userSubject, final String htmlMessage) {
+        this.fromLoginName = fromLoginName;
+        this.fromName = fromName;
+        this.replyEmail = replyEmail;
+        this.userSubject = userSubject;
+        this.htmlMessage = htmlMessage;
     }
 }

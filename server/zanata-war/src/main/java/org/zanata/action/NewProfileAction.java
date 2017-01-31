@@ -22,14 +22,11 @@ package org.zanata.action;
 
 import java.io.Serializable;
 import java.util.regex.Pattern;
-
-import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Model;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.zanata.exception.AuthorizationException;
@@ -43,38 +40,31 @@ import org.zanata.service.RegisterService;
 import org.zanata.ui.faces.FacesMessages;
 import org.zanata.util.UrlUtil;
 
-import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
-
 /**
  * This action handles new user profile creation.
- *
  */
 @Named("newProfileAction")
 @ViewScoped
 @Model
 @Transactional
-@Slf4j
-public class NewProfileAction extends AbstractProfileAction implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class NewProfileAction extends AbstractProfileAction
+        implements Serializable {
+    private static final org.slf4j.Logger log =
+            org.slf4j.LoggerFactory.getLogger(NewProfileAction.class);
 
+    private static final long serialVersionUID = 1L;
     @Inject
     private ZanataOpenId zanataOpenId;
-
     @Inject
     private EmailService emailServiceImpl;
-
     @Inject
     private FacesMessages facesMessages;
-
     @Inject
     private UrlUtil urlUtil;
-
     @Inject
     Messages msgs;
-
     @Inject
     RegisterService registerServiceImpl;
-
     @Inject
     ApplicationConfiguration applicationConfiguration;
 
@@ -82,9 +72,9 @@ public class NewProfileAction extends AbstractProfileAction implements Serializa
     public void onCreate() {
         AuthenticationType authType = identity.getCredentials().getAuthType();
         if (!identity.isPreAuthenticated()) {
-            throw new AuthorizationException("Need to be in pre authenticated state");
+            throw new AuthorizationException(
+                    "Need to be in pre authenticated state");
         }
-
         if (authType != AuthenticationType.OPENID) {
             // Open id user names are url's so they don't make good defaults
             username = identity.getCredentials().getUsername();
@@ -93,8 +83,7 @@ public class NewProfileAction extends AbstractProfileAction implements Serializa
             username = zanataOpenId.getAuthResult().getUsername();
             name = zanataOpenId.getAuthResult().getFullName();
             email = zanataOpenId.getAuthResult().getEmail();
-
-            //validate username if enforcing matching username is enabled
+            // validate username if enforcing matching username is enabled
             if (applicationConfiguration.isEnforceMatchingUsernames()) {
                 if (StringUtils.isBlank(username)) {
                     throw new ZanataServiceException(
@@ -114,8 +103,8 @@ public class NewProfileAction extends AbstractProfileAction implements Serializa
     }
 
     /**
-     * Make username readonly if
-     * - enforce by system property {@link ApplicationConfiguration#isEnforceMatchingUsernames()}
+     * Make username readonly if - enforce by system property
+     * {@link ApplicationConfiguration#isEnforceMatchingUsernames()}
      */
     public boolean isReadOnlyUsername() {
         return applicationConfiguration.isEnforceMatchingUsernames();
@@ -123,7 +112,7 @@ public class NewProfileAction extends AbstractProfileAction implements Serializa
 
     /**
      * Manual check if username is valid pattern
-     * {@link #USERNAME_REGEX}
+     * {@link HasUserDetail#USERNAME_REGEX}
      */
     private boolean isUsernameValid(String username) {
         Pattern p = Pattern.compile(USERNAME_REGEX);
@@ -135,24 +124,22 @@ public class NewProfileAction extends AbstractProfileAction implements Serializa
         this.valid = true;
         validateEmail(this.email);
         validateUsername(username);
-
         if (!this.isValid()) {
             return "failure";
         }
-
         String key;
         AuthenticationType authType = identity.getCredentials().getAuthType();
         if (authType == AuthenticationType.KERBEROS
                 || authType == AuthenticationType.JAAS) {
-            key = registerServiceImpl.register(
-                    this.username, this.username, this.email);
+            key = registerServiceImpl.register(this.username, this.username,
+                    this.email);
         } else {
-            key = registerServiceImpl.register(this.username, zanataOpenId
-                            .getAuthResult().getAuthenticatedId(),
-                            AuthenticationType.OPENID, this.name, this.email);
+            key = registerServiceImpl.register(this.username,
+                    zanataOpenId.getAuthResult().getAuthenticatedId(),
+                    AuthenticationType.OPENID, this.name, this.email);
         }
-        String message =
-                emailServiceImpl.sendActivationEmail(this.name, this.email, key);
+        String message = emailServiceImpl.sendActivationEmail(this.name,
+                this.email, key);
         identity.unAuthenticate();
         facesMessages.addGlobal(message);
         return "success";
@@ -162,5 +149,4 @@ public class NewProfileAction extends AbstractProfileAction implements Serializa
         identity.logout();
         urlUtil.redirectToInternal(urlUtil.home());
     }
-
 }

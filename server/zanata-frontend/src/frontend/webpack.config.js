@@ -10,12 +10,15 @@
 
 var webpack = require('webpack')
 var path = require('path')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
-  entry: './app/index',
+  entry: {
+    'bundle': './app/index'
+  },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: '[name].js'
   },
   module: {
     preLoaders: [
@@ -38,22 +41,31 @@ module.exports = {
         test: /\.css$/,
         include: [
           path.join(__dirname, 'app/styles'),
-          path.join(__dirname, 'node_modules/zanata-ui/lib/styles'),
+          path.join(__dirname, 'node_modules/zanata-ui/dist'),
         ],
-        loader: 'style!css!autoprefixer?browsers=last 2 versions'
+        loader: ExtractTextPlugin.extract(
+          'style',
+          'css',
+          'autoprefixer?browsers=last 2 versions'
+        )
       },
       {
         test: /\.less$/,
         exclude: /node_modules/,
         include: path.join(__dirname, 'app/styles'),
-        loader: "style!css!autoprefixer!less"
+        loader: ExtractTextPlugin.extract(
+          'style',
+          'css!less',
+          'autoprefixer?browsers=last 2 versions'
+        )
       },
     ]
   },
   plugins: [
+    new ExtractTextPlugin('frontend.css'),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
   ],
   resolve: {
     extensions: ['', '.js', '.jsx', '.json', '.css', '.less']

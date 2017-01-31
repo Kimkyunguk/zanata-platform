@@ -78,8 +78,7 @@ class Entry extends Component {
 
     /* eslint-disable react/jsx-no-bind */
     const updateButton = displayUpdateButton && (
-      <Button bsStyle='primary'
-        type='primary'
+      <Button bsSize='small' bsStyle='primary'
         disabled={isSaving}
         onClick={() => handleUpdateTerm(entry, transSelected)}>
         <LoaderText loading={isSaving} loadingText='Updating'>
@@ -114,7 +113,7 @@ class Entry extends Component {
     }
 
     return (
-      <div className='H(100%)--sm'>
+      <div>
         <TableRow highlight
           className='editable'
           selected={selected}
@@ -130,7 +129,7 @@ class Entry extends Component {
               </EditableText>)
             }
           </TableCell>
-          <TableCell size='3' tight={transSelected}>
+          <TableCell>
             {secondColumnContent}
           </TableCell>
           <TableCell hideSmall>
@@ -142,13 +141,13 @@ class Entry extends Component {
               editable={!transSelected && editable}
               editing={selected}
               onChange={(e) => handleTermFieldUpdate('pos', e)}
-              placeholder='Add part of speech…'
+              placeholder='Add part of speech'
               emptyReadOnlyText='No part of speech'>
               {entry.pos}
             </EditableText>)
           }
           </TableCell>
-          <TableCell size='2'>
+          <TableCell size='3'>
             {termsLoading
               ? loadingDiv
               : (<Row>
@@ -169,16 +168,19 @@ class Entry extends Component {
                     handleTermFieldUpdate(field, e)}
                   handleUpdateTerm={(entry) =>
                     handleUpdateTerm(entry, false)} />
-                  {updateButton}
-                <div
-                  className='Op(0) row--selected_Op(1) editable:h_Op(1)
-                    Trs(eo)'>
-                  {displayUpdateButton && !isSaving ? (
-                    <Button bsStyle='link'
-                      onClick={() => handleResetTerm(entry.id)}>
-                      Cancel
-                    </Button>
-                  ) : ''}
+                <div className='Op(0) row--selected_Op(1)
+                  editable:h_Op(1) Trs(eo)'>
+                  <div className='Hidden--lesm'>
+                    <Row>
+                      {updateButton}
+                      {displayUpdateButton && !isSaving ? (
+                        <Button bsStyle='link' bsSize='small'
+                          onClick={() => handleResetTerm(entry.id)}>
+                          Cancel
+                        </Button>
+                      ) : ''}
+                    </Row>
+                  </div>
                   {!transSelected && permission.canDeleteEntry && !isSaving &&
                   !displayUpdateButton && (
                     <DeleteEntryModal entry={entry}

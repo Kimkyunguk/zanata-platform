@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import NavItem from './NavItem'
-import { flattenThemeClasses } from 'zanata-ui'
 import { getDswid } from '../../utils/UrlHelper'
+import {remove} from 'lodash'
 
 const dswid = getDswid()
 
@@ -110,19 +110,6 @@ const items = [
     id: 'nav_more'
   }
 ]
-const classes = {
-  base: {
-    bgc: 'Bgc(pri)',
-    bxsh: 'Bxsh(ish1)',
-    d: 'D(f)!',
-    fld: 'Fld(c)--sm',
-    flxs: 'Flxs(0)',
-    h: 'H(100%)--sm',
-    or: 'Or(1) Or(0)--sm',
-    ov: 'Ov(h)',
-    w: 'W(r3)--sm'
-  }
-}
 
 /**
  * Generates side menu bar with icons
@@ -141,12 +128,18 @@ const Nav = ({
   const admin = (auth === 'admin')
 
   const username = window.config.user ? window.config.user.username : ''
+
+  if (!window.config.allowRegister) {
+    // we don't allow public registration
+    remove(items, item => item.id === 'nav_sign_up')
+  }
+
   return (
     <nav
       {...props}
       id='nav'
       name={username}
-      className={flattenThemeClasses(classes)}>
+      className='nav-bar'>
       {items.map((item, itemId) => {
         if (((item.auth === 'public') || (item.auth === auth) ||
           (item.auth === 'loggedin' && admin))) {

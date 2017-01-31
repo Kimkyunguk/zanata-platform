@@ -10,6 +10,7 @@
 
   <f:metadata>
     <f:event type="preRenderView" listener="#{register.redirectIfLoggedIn()}"/>
+    <f:event type="preRenderView" listener="#{register.checkRegistrationAvailability()}"/>
   </f:metadata>
 
   <ui:define name="page_title">#{msgs['jsf.Register']}</ui:define>
@@ -23,7 +24,7 @@
     </script>
 
     <div class="header__logo-only">
-      <h:link outcome="/home.xhtml" id="home" tabindex="1">
+      <h:link outcome="/public/home.xhtml" id="home" tabindex="1">
         <img src="#{assets['img/logo/logo.svg']}" alt="Zanata"/>
       </h:link>
     </div>

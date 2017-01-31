@@ -20,11 +20,8 @@
  */
 package org.zanata.model;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -38,8 +35,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -47,22 +42,18 @@ import org.hibernate.search.annotations.SortableField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zanata.hibernate.search.DateBridge;
-
 import com.google.common.annotations.VisibleForTesting;
 
-@Slf4j
 @EntityListeners({ ModelEntityBase.EntityListener.class })
 @MappedSuperclass
-public class ModelEntityBase implements Serializable, HashableState {
+public class ModelEntityBase implements Serializable {
+    private static final org.slf4j.Logger log =
+            org.slf4j.LoggerFactory.getLogger(ModelEntityBase.class);
 
     private static final long serialVersionUID = -6139220551322868743L;
-
     protected Long id;
-
     protected Date creationDate;
-
     protected Date lastChanged;
-
     protected Integer versionNum;
 
     @Id
@@ -95,10 +86,9 @@ public class ModelEntityBase implements Serializable, HashableState {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-
-
     // TODO extract lastChanged from ModelEntityBase and use with @Embedded
     // NB: also used in HSimpleComment
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     @Field(analyze = Analyze.NO)
@@ -116,14 +106,11 @@ public class ModelEntityBase implements Serializable, HashableState {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result =
-                prime
-                        * result
-                        + ((getCreationDate() == null) ? 0 : getCreationDate().hashCode());
+        result = prime * result + ((getCreationDate() == null) ? 0
+                : getCreationDate().hashCode());
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result =
-                prime * result
-                        + ((getLastChanged() == null) ? 0 : getLastChanged().hashCode());
+        result = prime * result + ((getLastChanged() == null) ? 0
+                : getLastChanged().hashCode());
         return result;
     }
 
@@ -161,7 +148,8 @@ public class ModelEntityBase implements Serializable, HashableState {
 
     private boolean overridesEquals(Object obj) {
         try {
-            return obj.getClass().getDeclaredMethod("equals", Object.class) != null;
+            return obj.getClass().getDeclaredMethod("equals",
+                    Object.class) != null;
         } catch (NoSuchMethodException e) {
             log.error("class does not override equals: " + obj.getClass(), e);
             return false;
@@ -171,20 +159,16 @@ public class ModelEntityBase implements Serializable, HashableState {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "@"
-                + Integer.toHexString(hashCode()) + "[id=" + id
-                + ",versionNum=" + versionNum + "]";
+                + Integer.toHexString(hashCode()) + "[id=" + id + ",versionNum="
+                + versionNum + "]";
     }
 
     protected boolean logPersistence() {
         return true;
     }
 
-    @Override
-    public void writeHashState(ByteArrayOutputStream buff) throws IOException {
-        buff.write(versionNum.byteValue());
-    }
-
     public static class EntityListener {
+
         @SuppressWarnings("unused")
         @PrePersist
         private void onPersist(ModelEntityBase meb) {
@@ -220,6 +204,5 @@ public class ModelEntityBase implements Serializable, HashableState {
                 log.info("remove entity: {}", meb);
             }
         }
-
     }
 }

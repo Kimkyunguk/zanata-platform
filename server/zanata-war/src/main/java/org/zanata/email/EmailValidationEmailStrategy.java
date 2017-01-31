@@ -20,18 +20,15 @@
  */
 package org.zanata.email;
 
-import com.googlecode.totallylazy.collections.PersistentMap;
-import lombok.RequiredArgsConstructor;
+import javaslang.collection.Map;
 import org.zanata.i18n.Messages;
-
 import javax.mail.internet.InternetAddress;
 
 /**
-* @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
-*/
-@RequiredArgsConstructor
-public class EmailValidationEmailStrategy extends
-        EmailStrategy {
+ * @author Sean Flanigan
+ *         <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
+ */
+public class EmailValidationEmailStrategy extends EmailStrategy {
     private final String key;
 
     @Override
@@ -45,14 +42,17 @@ public class EmailValidationEmailStrategy extends
     }
 
     @Override
-    public PersistentMap<String, Object> makeContext(
-            PersistentMap<String, Object> genericContext,
+    public Map<String, Object> makeContext(Map<String, Object> genericContext,
             InternetAddress[] toAddresses) {
-        PersistentMap<String, Object> context = super.makeContext(genericContext,
-                toAddresses);
-        return context
-                .insert("activationKey", key)
-                .insert("newEmail", toAddresses[0].getAddress())
-                .insert("toName", toAddresses[0].getPersonal());
+        Map<String, Object> context =
+                super.makeContext(genericContext, toAddresses);
+        return context.put("activationKey", key)
+                .put("newEmail", toAddresses[0].getAddress())
+                .put("toName", toAddresses[0].getPersonal());
+    }
+
+    @java.beans.ConstructorProperties({ "key" })
+    public EmailValidationEmailStrategy(final String key) {
+        this.key = key;
     }
 }

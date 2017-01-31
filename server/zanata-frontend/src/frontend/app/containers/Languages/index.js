@@ -53,7 +53,7 @@ class Languages extends Component {
       (totalCount % size > 0 ? 1 : 0)
 
     return (
-      <div className='page wideViewTheme'>
+      <div className='page wide-view-theme'>
         {notification &&
         (<Notification severity={notification.severity}
           message={notification.message}
@@ -71,10 +71,10 @@ class Languages extends Component {
             </h2>
             {permission.canAddLocale &&
               <div>
-                <Button bsStyle='primary'
+                <Button small bsStyle='primary'
                   id='btn-language-add-new'
                   onClick={handleOnDisplayNewLanguage}>
-                  <Icon name='plus' className='n2 plusicon'
+                  <Icon name='plus' className='s0 plusicon'
                     title='plus' />
                   Add new language
                 </Button>
@@ -97,8 +97,10 @@ class Languages extends Component {
               </FormGroup>
 
               {loading
-                ? <div className='contentViewContainer'>
-                  <LoaderText loading />
+                ? <div className='content-view-container'>
+                  <span className='list-inline'>
+                    <LoaderText loading />
+                  </span>
                 </div>
                 : (<div>
                   <div className='sort-items

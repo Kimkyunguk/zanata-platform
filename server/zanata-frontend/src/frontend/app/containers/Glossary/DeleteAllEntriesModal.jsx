@@ -35,7 +35,7 @@ class DeleteAllEntriesModal extends Component {
               Are you sure you want to delete&nbsp;
               <strong>all entries</strong>&nbsp;?
             </p>
-            <span className='two-spaced'>
+            <span className='button-spacing'>
               <Button bsStyle='default'
                 onClick={() => handleDeleteAllEntriesDisplay(false)}>
                 Cancel

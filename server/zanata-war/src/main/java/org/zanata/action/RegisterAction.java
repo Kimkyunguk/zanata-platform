@@ -21,73 +21,61 @@
 package org.zanata.action;
 
 import java.io.Serializable;
-
 import javax.enterprise.inject.Model;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.deltaspike.core.api.scope.GroupedConversation;
 import org.apache.deltaspike.core.api.scope.GroupedConversationScoped;
 import org.apache.deltaspike.jpa.api.transaction.Transactional;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.zanata.action.validator.NotDuplicateEmail;
+import org.zanata.config.AllowPublicRegistration;
 import org.zanata.dao.PersonDAO;
+import org.zanata.exception.AuthorizationException;
 import org.zanata.model.HPerson;
 import org.zanata.security.ZanataIdentity;
 import org.zanata.service.EmailService;
 import org.zanata.service.RegisterService;
 import org.zanata.ui.faces.FacesMessages;
 import org.zanata.util.UrlUtil;
-
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 @Named("register")
 @GroupedConversationScoped
 @Model
 @Transactional
-@Slf4j
-public class RegisterAction implements Serializable {
+public class RegisterAction implements HasUserDetail, Serializable {
+    private static final org.slf4j.Logger log =
+            org.slf4j.LoggerFactory.getLogger(RegisterAction.class);
 
     private static final long serialVersionUID = -7883627570614588182L;
-
     @Inject
     private GroupedConversation conversation;
-
     @Inject
     private EntityManager entityManager;
-
     @Inject
     private FacesMessages facesMessages;
-
     @Inject
     RegisterService registerServiceImpl;
-
     @Inject
     PersonDAO personDAO;
-
     @Inject
     EmailService emailServiceImpl;
-
     @Inject
     private ZanataIdentity identity;
-
     @Inject
     private UrlUtil urlUtil;
-
+    @Inject
+    @AllowPublicRegistration
+    private boolean allowRegistration;
     private String username;
     private String email;
     private String password;
     private String humanField;
-
     private boolean valid;
-
     private HPerson person;
 
     public String redirectIfLoggedIn() {
@@ -95,6 +83,13 @@ public class RegisterAction implements Serializable {
             urlUtil.redirectToInternal(urlUtil.dashboardUrl());
         }
         return null;
+    }
+
+    public void checkRegistrationAvailability() {
+        if (!allowRegistration) {
+            throw new AuthorizationException(
+                    "Public registration is disabled on this instance. Please contact admin to create your account");
+        }
     }
 
     public HPerson getPerson() {
@@ -108,10 +103,7 @@ public class RegisterAction implements Serializable {
         this.username = username;
     }
 
-    @NotEmpty
-    @Size(min = 3, max = 20)
-    @Pattern(regexp = AbstractProfileAction.USERNAME_REGEX,
-            message = "{validation.username.constraints}")
+    @Override
     public String getUsername() {
         return username;
     }
@@ -120,9 +112,8 @@ public class RegisterAction implements Serializable {
         this.email = email;
     }
 
-    @NotEmpty
-    @Email
     @NotDuplicateEmail(message = "This email address is already taken.")
+    @Override
     public String getEmail() {
         return email;
     }
@@ -130,13 +121,12 @@ public class RegisterAction implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+    // @Pattern(regex="(?=^.{6,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$",
+    // message="Password is not secure enough!")
 
     @NotEmpty
     @Size(min = 6, max = 1024)
-    // @Pattern(regex="(?=^.{6,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$",
-    // message="Password is not secure enough!")
-            public
-            String getPassword() {
+    public String getPassword() {
         return password;
     }
 
@@ -169,29 +159,23 @@ public class RegisterAction implements Serializable {
                     "You have filled a field that was not meant for humans.");
             humanField = null;
         }
-
     }
 
     public String register() {
         valid = true;
         validateUsername(getUsername());
         validateHumanField();
-
         if (!isValid()) {
             return null;
         }
         final String user = getUsername();
         final String pass = getPassword();
         final String email = getEmail();
-        String key =
-                registerServiceImpl.register(user, pass, getPerson().getName(),
-                        email);
+        String key = registerServiceImpl.register(user, pass,
+                getPerson().getName(), email);
         log.info("get register key:" + key);
-
-        String message =
-                emailServiceImpl.sendActivationEmail(user, email, key);
+        String message = emailServiceImpl.sendActivationEmail(user, email, key);
         facesMessages.addGlobal(message);
-
         conversation.close();
         return "/account/login.xhtml";
     }
@@ -199,5 +183,4 @@ public class RegisterAction implements Serializable {
     public boolean isValid() {
         return valid;
     }
-
 }

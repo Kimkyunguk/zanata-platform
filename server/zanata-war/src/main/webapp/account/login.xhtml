@@ -32,7 +32,7 @@
     </script>
 
     <div class="header__logo-only">
-      <h:link outcome="/home.xhtml" id="home" tabindex="1">
+      <h:link outcome="/public/home.xhtml" id="home" tabindex="1">
         <img src="#{assets['img/logo/logo.svg']}" alt="Zanata"/>
       </h:link>
     </div>
@@ -101,12 +101,12 @@
 
                   <ui:fragment
                     rendered="#{applicationConfiguration.internalAuth}">
-                    <div
-                      class="txt--align-center txt--align-center-s l--push-top-half">
+                    <h:panelGroup rendered="#{allowPublicRegistration}"
+                      styleClass="txt--align-center txt--align-center-s l--push-top-half">
                       #{msgs['jsf.login.DontHaveAnAccount.label']} <h:link
                       outcome="/account/register.xhtml"
                       value="#{msgs['jsf.SignUp']}"/>
-                    </div>
+                    </h:panelGroup>
                   </ui:fragment>
                   <ui:fragment
                     rendered="#{not applicationConfiguration.internalAuth and not empty applicationConfiguration.registerPath}">
