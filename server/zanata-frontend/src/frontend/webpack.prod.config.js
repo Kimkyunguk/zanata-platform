@@ -37,5 +37,8 @@ module.exports = merge.smart(defaultConfig, {
         'NODE_ENV': JSON.stringify('production')
       }
     })
-  ]
+  ],
+  eslint: {
+    failOnWarning: true,
+  }
 })

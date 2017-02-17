@@ -22,9 +22,10 @@ module.exports = merge.smart(defaultConfig, {
       {
         test: /\.css$/,
         exclude: /node_modules/,
+        // prevent css optimisation and minification
         loader: ExtractTextPlugin.extract(
           'style',
-          'css?-minimize',
+          'css?-minimize!postcss!rework',
           'autoprefixer?browsers=last 2 versions'
         )
       },

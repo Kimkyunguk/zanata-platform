@@ -23,6 +23,11 @@ module.exports = merge.smart(defaultConfig, {
       }
     })
   ],
+
+  eslint: {
+    failOnError: false
+  },
+
   devServer: {
     // TODO include other devserver config that is on command-line now
     historyApiFallback: true,
@@ -30,4 +35,5 @@ module.exports = merge.smart(defaultConfig, {
       colors: true
     }
   }
+
 })
