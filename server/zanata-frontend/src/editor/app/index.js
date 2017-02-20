@@ -15,7 +15,7 @@ import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
 import rootReducer from './reducers/editor'
 
-import Root from './containers/Root'
+import Root from './containers/EditorRoot'
 import NeedSlugMessage from './containers/NeedSlugMessage'
 
 import 'zanata-ui/dist/zanata-ui.css'

@@ -7,6 +7,7 @@ rules:
   # decided that it makes more sense to be consistent with other markup by using
   # double-quotes for attributes.
   jsx-quotes:
-    - 2              # Error to enforce compliance.
+# TODO editor used to have this rule enforced but frontend is using single quote
+    - 0              # (0 = off, 1 = warn, 2 = error) Can't enforce yet as frontend and editor are using different style.
     - prefer-double  # Use double quotes unless the string contains a literal
                      # double-quote character.

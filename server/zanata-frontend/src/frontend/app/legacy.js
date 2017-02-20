@@ -58,7 +58,7 @@ const links = {
 const activePath = window.location.pathname.replace(/\/$/, '')
 
 render(
-  <div className='H(a) H(100%)--sm'>
+  <div className="H(a) H(100%)--sm">
     <Icons />
     <Nav active={activePath} isJsfPage links={links} />
   </div>
