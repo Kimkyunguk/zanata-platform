@@ -1,7 +1,7 @@
 import updateObject from 'react-addons-update'
 import {
   OPEN_DROPDOWN, CLOSE_DROPDOWN, TOGGLE_DROPDOWN
-} from '../actions'
+} from '../../actions/editor'
 
 const defaultState = {
   openDropdownKey: undefined,

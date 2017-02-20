@@ -1,5 +1,5 @@
 import stateChangeDispatchMiddleware from './state-change-dispatch'
-import { findPhraseSuggestionsById } from '../actions/suggestions'
+import { findPhraseSuggestionsById } from '../actions/editor/suggestions'
 
 /**
  * Middleware to search for phrase suggestions when a phrase is selected.

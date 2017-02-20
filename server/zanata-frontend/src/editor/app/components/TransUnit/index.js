@@ -5,7 +5,7 @@ import TransUnitSourcePanel from '../TransUnitSourcePanel'
 import TransUnitTranslationPanel from '../TransUnitTranslationPanel'
 import { connect } from 'react-redux'
 import { pick } from 'lodash'
-import { toggleDropdown, closeDropdown } from '../../actions'
+import { toggleDropdown, closeDropdown } from '../../actions/editor'
 import {
   cancelEdit,
   copyFromSource,
@@ -14,8 +14,8 @@ import {
   selectPhrasePluralIndex,
   translationTextInputChanged,
   undoEdit
-} from '../../actions/phrases'
-import { togglePhraseSuggestions } from '../../actions/suggestions'
+} from '../../actions/editor/phrases'
+import { togglePhraseSuggestions } from '../../actions/editor/suggestions'
 
 /**
  * Single row in the editor displaying a whole phrase.

@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import {
   toggleHeader,
   toggleKeyboardShortcutsModal
-} from '../actions/headerActions'
+} from '../actions/editor/headerActions'
 import {
   resetStatusFilter,
   updateStatusFilter,
@@ -16,8 +16,8 @@ import {
   nextPage,
   previousPage,
   lastPage
-} from '../actions/controlsHeaderActions'
-import { toggleSuggestions } from '../actions/suggestions'
+} from '../actions/editor/controlsHeaderActions'
+import { toggleSuggestions } from '../actions/editor/suggestions'
 import { calculateMaxPageIndexFromState } from '../utils/filter-paging-util'
 
 const { bool, func, number, shape } = PropTypes

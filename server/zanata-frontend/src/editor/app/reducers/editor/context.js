@@ -1,4 +1,4 @@
-import { ROUTING_PARAMS_CHANGED } from '../actions'
+import { ROUTING_PARAMS_CHANGED } from '../../actions/editor'
 import { DEFAULT_LOCALE } from './ui'
 
 const defaultState = {

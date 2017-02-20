@@ -2,7 +2,7 @@ import updateObject from 'react-addons-update'
 import {
   CLAMP_PAGE,
   UPDATE_PAGE
-} from '../actions/controlsHeaderActions'
+} from '../../actions/editor/controlsHeaderActions'
 import {
   CANCEL_EDIT,
   COPY_FROM_ALIGNED_SOURCE,
@@ -19,15 +19,15 @@ import {
   SELECT_PHRASE_SPECIFIC_PLURAL,
   TRANSLATION_TEXT_INPUT_CHANGED,
   UNDO_EDIT
-} from '../actions/phrases'
-import { COPY_SUGGESTION } from '../actions/suggestions'
+} from '../../actions/editor/phrases'
+import { COPY_SUGGESTION } from '../../actions/editor/suggestions'
 import {
   calculateMaxPageIndex,
   calculateMaxPageIndexFromState,
   getFilteredPhrasesFromState
-} from '../utils/filter-paging-util'
-import { SET_SAVE_AS_MODE } from '../actions/editorShortcuts'
-import { MOVE_NEXT, MOVE_PREVIOUS } from '../actions/phraseNavigation'
+} from '../../utils/filter-paging-util'
+import { SET_SAVE_AS_MODE } from '../../actions/editor/editorShortcuts'
+import { MOVE_NEXT, MOVE_PREVIOUS } from '../../actions/editor/phraseNavigation'
 
 // TODO use lodash when upgraded
 // clamps a number within the inclusive lower and upper bounds

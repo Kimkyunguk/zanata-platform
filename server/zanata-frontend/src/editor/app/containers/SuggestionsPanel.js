@@ -13,7 +13,7 @@ import {
   showDetailForSuggestionByIndex,
   toggleSearchType,
   toggleSuggestions
-} from '../actions/suggestions'
+} from '../actions/editor/suggestions'
 
 const DO_NOT_RENDER = null
 const SEARCH_TYPE_PHRASE = 'phrase'

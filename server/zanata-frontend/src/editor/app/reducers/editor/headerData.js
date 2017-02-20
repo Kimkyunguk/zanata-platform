@@ -3,10 +3,10 @@ import {
   HEADER_DATA_FETCHED,
   LOCALE_SELECTED,
   STATS_FETCHED
-} from '../actions/headerActions'
+} from '../../actions/editor/headerActions'
 import updateObject from 'react-addons-update'
-import {prepareLocales, prepareStats, prepareDocs} from '../utils/Util'
-import { dashboardUrl, serviceUrl } from '../api'
+import {prepareLocales, prepareStats, prepareDocs} from '../../utils/Util'
+import { dashboardUrl, serviceUrl } from '../../api'
 
 const defaultState = {
   user: {

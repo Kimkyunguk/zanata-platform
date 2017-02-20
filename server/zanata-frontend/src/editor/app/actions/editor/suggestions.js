@@ -1,4 +1,4 @@
-import { getSuggestions } from '../api/suggestions'
+import { getSuggestions } from '../../api/suggestions'
 import { debounce } from 'lodash'
 
 export const TOGGLE_SUGGESTIONS = Symbol('TOGGLE_SUGGESTIONS')

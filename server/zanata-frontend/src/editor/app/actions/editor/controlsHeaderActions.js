@@ -1,7 +1,7 @@
 import {
   calculateMaxPageIndexFromState
-} from '../utils/filter-paging-util'
-import { replaceRouteQuery } from '../utils/RoutingHelpers'
+} from '../../utils/filter-paging-util'
+import { replaceRouteQuery } from '../../utils/RoutingHelpers'
 
 export const RESET_STATUS_FILTERS = Symbol('RESET_STATUS_FILTERS')
 export function resetStatusFilter () {

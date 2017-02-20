@@ -3,16 +3,16 @@ import {
   TOGGLE_HEADER,
   TOGGLE_KEY_SHORTCUTS,
   UI_LOCALES_FETCHED
-} from '../actions/headerActions'
+} from '../../actions/editor/headerActions'
 import {
   RESET_STATUS_FILTERS,
   UPDATE_STATUS_FILTER
-} from '../actions/controlsHeaderActions'
+} from '../../actions/editor/controlsHeaderActions'
 import {
   SUGGESTION_PANEL_HEIGHT_CHANGE,
   TOGGLE_SUGGESTIONS
-} from '../actions/suggestions'
-import {prepareLocales} from '../utils/Util'
+} from '../../actions/editor/suggestions'
+import {prepareLocales} from '../../utils/Util'
 import updateObject from 'react-addons-update'
 
 // TODO extract this to a common config

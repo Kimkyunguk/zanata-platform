@@ -13,7 +13,7 @@
 import { assign } from 'lodash'
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { routingParamsChanged } from '../actions'
+import { routingParamsChanged } from '../actions/editor'
 
 class ParamPropDispatcher extends React.Component {
   componentWillMount () {

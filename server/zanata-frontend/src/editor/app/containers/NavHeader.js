@@ -8,8 +8,8 @@ import UiLanguageDropdown from '../components/UiLanguageDropdown'
 */
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { toggleDropdown } from '../actions'
-import { changeUiLocale } from '../actions/headerActions'
+import { toggleDropdown } from '../actions/editor'
+import { changeUiLocale } from '../actions/editor/headerActions'
 
 const { any, arrayOf, func, object, shape, string } = PropTypes
 

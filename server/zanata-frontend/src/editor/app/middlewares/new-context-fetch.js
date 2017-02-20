@@ -1,12 +1,13 @@
 import stateChangeDispatchMiddleware from './state-change-dispatch'
-import { requestDocumentList } from '../actions'
-import { requestPhraseList, fetchPhraseDetails } from '../actions/phrases'
+import { requestDocumentList } from '../actions/editor'
+import { requestPhraseList, fetchPhraseDetails
+} from '../actions/editor/phrases'
 import {
   fetchHeaderInfo,
   selectDoc,
   selectLocale
-} from '../actions/headerActions'
-import { UPDATE_PAGE } from '../actions/controlsHeaderActions'
+} from '../actions/editor/headerActions'
+import { UPDATE_PAGE } from '../actions/editor/controlsHeaderActions'
 import { every, isUndefined, max, negate } from 'lodash'
 
 /**

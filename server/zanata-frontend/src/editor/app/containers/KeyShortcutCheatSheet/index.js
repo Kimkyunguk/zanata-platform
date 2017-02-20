@@ -4,8 +4,9 @@ import KeyCombinations from '../../components/KeyCombinations'
 import { chain, each, map } from 'lodash'
 import { connect } from 'react-redux'
 import React, { PropTypes } from 'react'
-import { SHORTCUTS } from '../../actions/editorShortcuts'
-import { toggleKeyboardShortcutsModal } from '../../actions/headerActions'
+import { SHORTCUTS } from '../../actions/editor/editorShortcuts'
+import { toggleKeyboardShortcutsModal
+} from '../../actions/editor/headerActions'
 
 /**
  * Modal showing a summary of the available key shortcuts.

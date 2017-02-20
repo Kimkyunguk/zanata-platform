@@ -5,9 +5,9 @@ import {
   fetchProjectInfo,
   fetchDocuments,
   fetchVersionLocales
-} from '../api'
+} from '../../api'
 import { some, curry, isEmpty } from 'lodash'
-import { equals } from '../utils/string-utils'
+import { equals } from '../../utils/string-utils'
 
 export const TOGGLE_HEADER = Symbol('TOGGLE_HEADER')
 

@@ -1,4 +1,4 @@
-import { fetchPhraseList, fetchPhraseDetail, savePhrase } from '../api'
+import { fetchPhraseList, fetchPhraseDetail, savePhrase } from '../../api'
 import { toggleDropdown } from '.'
 import { isUndefined, mapValues, slice } from 'lodash'
 import {
@@ -7,8 +7,8 @@ import {
   STATUS_UNTRANSLATED,
   STATUS_NEEDS_WORK,
   STATUS_NEEDS_WORK_SERVER
-} from '../utils/status'
-import { hasTranslationChanged } from '../utils/phrase'
+} from '../../utils/status'
+import { hasTranslationChanged } from '../../utils/phrase'
 
 export const FETCHING_PHRASE_LIST = Symbol('FETCHING_PHRASE_LIST')
 

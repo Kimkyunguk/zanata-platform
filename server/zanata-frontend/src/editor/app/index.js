@@ -13,7 +13,7 @@ import getStateInActions from './middlewares/getstate-in-actions'
 import titleUpdateMiddleware from './middlewares/title-update'
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
-import rootReducer from './reducers'
+import rootReducer from './reducers/editor'
 
 import Root from './containers/Root'
 import NeedSlugMessage from './containers/NeedSlugMessage'

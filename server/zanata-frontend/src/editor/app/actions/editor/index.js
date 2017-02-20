@@ -1,4 +1,4 @@
-import { fetchDocuments } from '../api'
+import { fetchDocuments } from '../../api'
 
 export const ROUTING_PARAMS_CHANGED = Symbol('ROUTING_PARAMS_CHANGED')
 export function routingParamsChanged (newParams) {
