@@ -88,10 +88,13 @@ window.config = mapValues(window.config, (value) =>
 // baseUrl should be /zanata or ''
 window.config.baseUrl = window.config.baseUrl || ''
 
-render(
-  <Root store={store} history={history} />,
-  document.getElementById('root')
-)
+const frontendRoot = document.getElementById('root')
+if (frontendRoot) {
+  render(
+    <Root store={store} history={history} />,
+    document.getElementById('root')
+  )
+}
 
 /**
  * Top level of the Zanata editor app.
@@ -139,7 +142,7 @@ const createStoreWithMiddleware =
 const editorStore = createStoreWithMiddleware(editorRootReducer)
 reduxRouterMiddleware.listenForReplays(editorStore)
 
-const rootElement = document.getElementById('appRoot')
+const editorRoot = document.getElementById('appRoot')
 
 // FIXME current (old) behaviour when not enough params are specified is to
 //       reset to blank app and not even keep the project/version part of the
@@ -147,15 +150,17 @@ const rootElement = document.getElementById('appRoot')
 //       first doc and language in the list and goes ahead.
 //   Should be able to do better than that.
 
-render(
-  <IntlProvider locale={locale} formats={formats}>
-    <Provider store={editorStore}>
-      <Router history={history}>
-        {/* The ** is docId, captured as params.splat by react-router. */}
-        <Route
-          path="/project/translate/:projectSlug/v/:versionSlug/**"
-          component={EditorRoot} />
-        <Route path="/*" component={NeedSlugMessage} />
-      </Router>
-    </Provider>
-  </IntlProvider>, rootElement)
+if (editorRoot) {
+  render(
+    <IntlProvider locale={locale} formats={formats}>
+      <Provider store={editorStore}>
+        <Router history={history}>
+          {/* The ** is docId, captured as params.splat by react-router. */}
+          <Route
+            path="/project/translate/:projectSlug/v/:versionSlug/**"
+            component={EditorRoot} />
+          <Route path="/*" component={NeedSlugMessage} />
+        </Router>
+      </Provider>
+    </IntlProvider>, editorRoot)
+}

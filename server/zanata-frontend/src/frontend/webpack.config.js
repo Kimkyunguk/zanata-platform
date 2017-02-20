@@ -23,7 +23,7 @@ var reworkSuitConformance = require('rework-suit-conformance')
 
 module.exports = {
   entry: {
-    'bundle': './app/index'
+    'bundle': ['./app/index.js']
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -49,7 +49,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        include: path.join(__dirname, 'app'),
+        include: join(__dirname, 'app'),
         loader: 'babel?presets[]=react,presets[]=es2015,presets[]=stage-0'
       },
 
@@ -58,11 +58,9 @@ module.exports = {
        */
       {
         test: /\.css$/,
-        exclude: /node_modules/,
         loader: ExtractTextPlugin.extract(
           'style',
-          'css!csso!postcss!rework',
-          'autoprefixer?browsers=last 2 versions'
+          'css!csso!postcss!rework!autoprefixer?browsers=last 2 versions'
         )
       },
 
@@ -136,7 +134,7 @@ module.exports = {
   /* Enables a range of syntax improvements and checks for css files */
   rework: {
     use: [
-      reworkNpm(),
+      reworkNpm({ root: join(__dirname, 'app') }),
       reworkVars(),
       reworkCalc,
       reworkColorFunction,

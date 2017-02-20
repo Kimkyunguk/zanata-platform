@@ -1,4 +1,4 @@
-@import 'suitcss-utils-text';
+@import '../../../node_modules/suitcss-utils-text';
 
 :root {
   --u-text-color-invert: #fff;

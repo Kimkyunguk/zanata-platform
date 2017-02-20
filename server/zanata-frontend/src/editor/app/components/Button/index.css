@@ -1,6 +1,6 @@
 /** @define Button; use strict */
 
-@import 'suitcss-components-button';
+@import '../../../node_modules/suitcss-components-button';
 
 :root {
   --Button-rhythm: 1.5rem;

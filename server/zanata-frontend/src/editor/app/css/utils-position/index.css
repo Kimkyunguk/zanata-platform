@@ -1,4 +1,4 @@
-@import 'suitcss-utils-position';
+@import '../../../node_modules/suitcss-utils-position';
 
 .u-posAbsoluteLeft {
   bottom: 0 !important;

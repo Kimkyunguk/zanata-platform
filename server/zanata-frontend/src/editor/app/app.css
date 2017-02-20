@@ -16,7 +16,7 @@
  * Components
  */
 
-@import 'suitcss-components-grid';
+@import '../node_modules/suitcss-components-grid';
 @import './css/base/index.css';
 @import './components/SplitDropdown/index.css';
 @import './components/Button/index.css';

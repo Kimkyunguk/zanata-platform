@@ -9,11 +9,13 @@
 
     <!-- Custom styles for admin-lang template -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" async
+      href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,400italic'>
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
 
     <title>Zanata</title>
   </head>
-  <body class="bodystyle">
+  <body class="bodystyle new-zanata">
   <!-- Test data for dev mode -->
     <div id="config"
       data-base-url="http://localhost:8080"
@@ -28,7 +30,10 @@
     <script type="application/javascript">
       window.config = document.getElementById('config').dataset
     </script>
+    <!-- this is the root element for explore, profile, langauges-->
     <div id="root" />
+    <!-- this is the root element for editor -->
+    <div id="appRoot"/>
     <script src="/bundle.js" ></script>
   </body>
 </html>

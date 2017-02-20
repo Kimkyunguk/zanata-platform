@@ -1,4 +1,4 @@
-@import 'suitcss-utils-layout';
+@import '../../../node_modules/suitcss-utils-layout';
 
 @media (--sm-viewport) {
 

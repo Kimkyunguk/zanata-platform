@@ -12,6 +12,7 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var _ = require('lodash')
 var merge = require('webpack-merge')
+var path = require('path')
 var defaultConfig = require('./webpack.prod.config.js')
 
 module.exports = merge.smart(defaultConfig, {
@@ -21,12 +22,10 @@ module.exports = merge.smart(defaultConfig, {
     loaders: [
       {
         test: /\.css$/,
-        exclude: /node_modules/,
         // prevent css optimisation and minification
         loader: ExtractTextPlugin.extract(
           'style',
-          'css?-minimize!postcss!rework',
-          'autoprefixer?browsers=last 2 versions'
+          'css?-minimize!postcss!rework!autoprefixer?browsers=last 2 versions'
         )
       },
       {
