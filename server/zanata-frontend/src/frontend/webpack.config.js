@@ -23,7 +23,8 @@ var reworkSuitConformance = require('rework-suit-conformance')
 
 module.exports = {
   entry: {
-    'bundle': ['./app/index.js']
+    'frontend': './app/index.js',
+    'editor': './app/editor/index.js'
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -80,8 +81,9 @@ module.exports = {
   },
 
   plugins: [
-    /* Outputs css to a separate file. Note the call to .extract above */
-    new ExtractTextPlugin('frontend.css'),
+    /* Outputs css to a separate file per entry-point.
+       Note the call to .extract above */
+    new ExtractTextPlugin('[name].css'),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
     new webpack.NoErrorsPlugin(),
