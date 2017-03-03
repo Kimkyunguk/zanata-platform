@@ -19,8 +19,8 @@ def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
  * Yet able to create report
  */
 timestamps {
-  ansicolor {
-    node {
+  node {
+    ansicolor {
       try {
         stage('Checkout') {
           info.printNode()
@@ -94,34 +94,34 @@ timestamps {
               testResults: "**/${surefireTestReports}"
       }
     }
+    if (currentBuild.result.equals('FAILURE')){
+      return 1
+    }
   }
-}
 
-
-if (currentBuild.result.equals('FAILURE')){
-  return 1
-}
-
-timestamps {
   try {
     stage('Integration tests') {
       def tasks = [:]
       tasks['Integration tests: WILDFLY'] = {
         node {
-          info.printNode()
-          info.printEnv()
-          debugChromeDriver()
-          unstash 'workspace'
-          integrationTests('wildfly8')
+          ansicolor {
+            info.printNode()
+            info.printEnv()
+            debugChromeDriver()
+            unstash 'workspace'
+            integrationTests('wildfly8')
+          }
         }
       }
       tasks['Integration tests: JBOSSEAP'] = {
         node {
-          info.printNode()
-          info.printEnv()
-          debugChromeDriver()
-          unstash 'workspace'
-          integrationTests('jbosseap6')
+          ansicolor {
+            info.printNode()
+            info.printEnv()
+            debugChromeDriver()
+            unstash 'workspace'
+            integrationTests('jbosseap6')
+          }
         }
       }
       tasks.failFast = true
