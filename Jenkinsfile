@@ -101,50 +101,34 @@ if (currentBuild.result.equals('FAILURE')){
   return 1
 }
 
-try {
-  timestamps {
-    node {
-      ansicolor {
-
-        stage('Integration tests') {
-          def tasks = [:]
-          tasks['Integration tests: WILDFLY'] = {
-            node {
-              ansicolor {
-                info.printNode()
-                info.printEnv()
-                debugChromeDriver()
-                unstash 'workspace'
-                integrationTests('wildfly8')
-              }
-            }
-          }
-          tasks['Integration tests: JBOSSEAP'] = {
-            node {
-              ansicolor {
-                info.printNode()
-                info.printEnv()
-                debugChromeDriver()
-                unstash 'workspace'
-                integrationTests('jbosseap6')
-              }
-            }
-          }
-          tasks.failFast = true
-          parallel tasks
+timestamps {
+  try {
+    stage('Integration tests') {
+      def tasks = [:]
+      tasks['Integration tests: WILDFLY'] = {
+        node {
+          info.printNode()
+          info.printEnv()
+          debugChromeDriver()
+          unstash 'workspace'
+          integrationTests('wildfly8')
         }
       }
-      // TODO in case of failure, notify culprits via IRC and/or email
-      // https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin#Email-extplugin-PipelineExamples
-      // http://stackoverflow.com/a/39535424/14379
-      // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
-      // possible alternatives: Slack, HipChat, RocketChat, Telegram?
-      notify.successful()
+      tasks['Integration tests: JBOSSEAP'] = {
+        node {
+          info.printNode()
+          info.printEnv()
+          debugChromeDriver()
+          unstash 'workspace'
+          integrationTests('jbosseap6')
+        }
+      }
+      tasks.failFast = true
+      parallel tasks
     }
+  } catch (e) {
+    throw e
   }
-} catch (e) {
-  notify.failed()
-  throw e
 }
 
 // TODO factor these out into zanata-pipeline-library too
@@ -185,9 +169,16 @@ void integrationTests(def appserver) {
           """
       }
     }
+    // TODO in case of failure, notify culprits via IRC and/or email
+    // https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin#Email-extplugin-PipelineExamples
+    // http://stackoverflow.com/a/39535424/14379
+    // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
+    // possible alternatives: Slack, HipChat, RocketChat, Telegram?
+    notify.successful()
   }catch(e){
     currentBuild.result = 'UNSTABLE'
     archiveTestFilesIfUnstable()
+    notify.failed()
     throw e
   }finally{
     notify.testResults(appserver.toUpperCase())
