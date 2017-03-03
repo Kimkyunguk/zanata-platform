@@ -18,10 +18,10 @@ def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
  * Failed and stop the build
  * Yet able to create report
  */
-try {
-  timestamps {
+timestamps {
+  ansicolor {
     node {
-      ansicolor {
+      try {
         stage('Checkout') {
           info.printNode()
           notify.started()
@@ -63,39 +63,40 @@ try {
           // Continue building even when test failure
           // Thus -Dmaven.test.failure.ignore is required
           sh """./run-clean.sh ./mvnw -e clean package jxr:aggregate\
-                     --batch-mode \
-                     --settings .travis-settings.xml \
-                     --update-snapshots \
-                     -DstaticAnalysis \
-                     -Dchromefirefox \
-                     -DskipFuncTests \
-                     -DskipArqTests \
-                     -Dmaven.test.failure.ignore \
-            """
-            setJUnitPrefix("UNIT", surefireTestReports)
+                      --batch-mode \
+                      --settings .travis-settings.xml \
+                      --update-snapshots \
+                      -DstaticAnalysis \
+                      -Dchromefirefox \
+                      -DskipFuncTests \
+                      -DskipArqTests \
+                      -Dmaven.test.failure.ignore \
+             """
+          setJUnitPrefix("UNIT", surefireTestReports)
 
-            // notify if compile+unit test successful
-            notify.testResults("UNIT")
-            archive "**/${jarFiles},**/${warFiles}"
-            currentBuild.result = 'SUCCESS'
+          // notify if compile+unit test successful
+          notify.testResults("UNIT")
+          archive "**/${jarFiles},**/${warFiles}"
+          currentBuild.result = 'SUCCESS'
         }
 
         stage('stash') {
           stash name: 'workspace', includes: '**'
         }
+      } catch (e) {
+        notify.failed()
+        currentBuild.result = 'FAILURE'
+        throw e
+      } finally {
+        junit allowEmptyResults: true,
+              keepLongStdio: true,
+              testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
+              testResults: "**/${surefireTestReports}"
       }
     }
   }
-} catch (e) {
-  notify.failed()
-  currentBuild.result = 'FAILURE'
-  throw e
-} finally {
-  junit allowEmptyResults: true,
-      keepLongStdio: true,
-      testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
-      testResults: "**/${surefireTestReports}"
 }
+
 
 if (currentBuild.result.equals('FAILURE')){
   return 1
