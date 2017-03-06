@@ -168,6 +168,7 @@ void integrationTests(def appserver) {
                    -Dwebdriver.chrome.driver=/opt/chromedriver \
                    -DallFuncTests
           """
+          setJUnitPrefix(appserver, failsafeTestReports)
       }
     }
     // TODO in case of failure, notify culprits via IRC and/or email
