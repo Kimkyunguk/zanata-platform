@@ -145,7 +145,7 @@ void debugChromeDriver() {
   sh returnStatus: true, script: 'ls -l /opt/chromedriver /opt/google/chrome/google-chrome'
 }
 
-void integrationTests(def appserver) {
+void integrationTests(String appserver) {
   sh "find . -path \"*/${failsafeTestReports}\" -delete"
 
   try{
