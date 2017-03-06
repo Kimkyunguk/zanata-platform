@@ -12,7 +12,6 @@ def projectProperties = [
 properties(projectProperties)
 
 def surefireTestReports='target/surefire-reports/TEST-*.xml'
-def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
 
 /* Upto stash stage should fail fast:
  * Failed and stop the build
@@ -146,6 +145,7 @@ void debugChromeDriver() {
 }
 
 void integrationTests(String appserver) {
+  def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
   sh "find . -path \"*/${failsafeTestReports}\" -delete"
 
   try{
