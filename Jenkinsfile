@@ -98,36 +98,31 @@ timestamps {
     }
   }
 
-  try {
-    stage('Integration tests') {
-      def tasks = [:]
-      tasks['Integration tests: WILDFLY'] = {
-        node {
-          ansicolor {
-            info.printNode()
-            info.printEnv()
-            debugChromeDriver()
-            unstash 'workspace'
-            integrationTests('wildfly8')
+  node {
+    ansicolor {
+      try {
+        stage('Integration tests') {
+          def tasks = [:]
+          def taskProperties = [
+              'WILDFLY': 'wildfly8',
+              'JBOSSEAP': 'jbosseap6'
+          ]
+          map.each { entry ->
+            tasks["Integration tests: ${entry.key}"] = {
+              info.printNode()
+              info.printEnv()
+              debugChromeDriver()
+              unstash 'workspace'
+              integrationTests(entry.value)
+            }
           }
+          tasks.failFast = true
+          parallel tasks
         }
+      } catch (e) {
+        throw e
       }
-      tasks['Integration tests: JBOSSEAP'] = {
-        node {
-          ansicolor {
-            info.printNode()
-            info.printEnv()
-            debugChromeDriver()
-            unstash 'workspace'
-            integrationTests('jbosseap6')
-          }
-        }
-      }
-      tasks.failFast = true
-      parallel tasks
     }
-  } catch (e) {
-    throw e
   }
 }
 
