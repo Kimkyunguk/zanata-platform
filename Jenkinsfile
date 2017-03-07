@@ -100,8 +100,8 @@ timestamps {
 
   node {
     ansicolor {
-      try {
-        stage('Integration tests') {
+      stage('Integration tests') {
+        try {
           def tasks = [:]
           def taskProperties = [
               'WILDFLY': 'wildfly8',
@@ -118,9 +118,10 @@ timestamps {
           }
           tasks.failFast = true
           parallel tasks
+          step([ $class: 'JacocoPublisher' ])
+        } catch (e) {
+          throw e
         }
-      } catch (e) {
-        throw e
       }
     }
   }
