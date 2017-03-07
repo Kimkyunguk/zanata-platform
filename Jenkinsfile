@@ -84,7 +84,7 @@ timestamps {
         }
 
         stage('stash') {
-          stash name: 'workspace', includes: '**'
+          stash name: 'workspace', includes: '**/target/**'
         }
       } catch (e) {
         notify.failed()
@@ -131,8 +131,9 @@ void functionalTestTask(String appserver){
   node{
     info.printNode()
     info.printEnv()
+    checkout scm
     debugChromeDriver()
-    // unstash 'workspace'
+    unstash 'workspace'
     // integrationTests(appserver)
   }
 }
