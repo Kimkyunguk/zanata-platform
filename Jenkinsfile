@@ -107,13 +107,13 @@ timestamps {
               'WILDFLY': 'wildfly8',
               'JBOSSEAP': 'jbosseap6'
           ]
-          for ( entry in taskProperties ){
+          for ( entry: taskProperties ){
             tasks["Integration tests: ${entry.key}"] = {
               info.printNode()
               info.printEnv()
               debugChromeDriver()
               unstash 'workspace'
-              integrationTests(entry.value)
+//              integrationTests(entry.value)
             }
           }
           tasks.failFast = true
