@@ -103,20 +103,12 @@ timestamps {
       stage('Integration tests') {
         try {
           def tasks = [:]
-          def taskProperties = [
-              'WILDFLY': 'wildfly8',
-              'JBOSSEAP': 'jbosseap6'
-          ]
 
-          for (i=0; i< taskProperties.size() ;i++ ){
-
-            tasks["Integration tests: ${taskProperties[i].key}"] = {
-              info.printNode()
-              info.printEnv()
-              debugChromeDriver()
-              unstash 'workspace'
-              //              integrationTests(taskProperties[i].value)
-            }
+          tasks["Integration tests: WILDFLY"] = {
+            functionalTestTask('wildfly8')
+          }
+          tasks["Integration tests: JBOSSEAP"] = {
+            functionalTestTask('jbosseap6')
           }
           tasks.failFast = true
           parallel tasks
@@ -140,6 +132,16 @@ void xvfb(Closure wrapped) {
 void debugChromeDriver() {
   sh returnStatus: true, script: 'which chromedriver google-chrome'
   sh returnStatus: true, script: 'ls -l /opt/chromedriver /opt/google/chrome/google-chrome'
+}
+
+void functionalTestTask(String appserver){
+  node{
+    info.printNode()
+    info.printEnv()
+    debugChromeDriver()
+    unstash 'workspace'
+    // integrationTests(appserver)
+  }
 }
 
 void integrationTests(String appserver) {
