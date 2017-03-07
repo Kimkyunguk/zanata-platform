@@ -100,15 +100,13 @@ timestamps {
         def tasks = [:]
 
         tasks["Integration tests: WILDFLY"] = {
-          functionalTestTask('wildfly8')
+          integrationTests('wildfly8')
         }
         tasks["Integration tests: JBOSSEAP"] = {
-          functionalTestTask('jbosseap6')
+          integrationTests('jbosseap6')
         }
         tasks.failFast = true
         parallel tasks
-        //currentBuild.result = 'SUCCESS'
-
       }
     }
   }
@@ -127,61 +125,57 @@ void debugChromeDriver() {
   sh returnStatus: true, script: 'ls -l /opt/chromedriver /opt/google/chrome/google-chrome'
 }
 
-void functionalTestTask(String appserver){
+void integrationTests(String appserver) {
+  def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
   node{
     info.printNode()
     info.printEnv()
     checkout scm
     debugChromeDriver()
     unstash 'workspace'
-    // integrationTests(appserver)
-  }
-}
+    sh "find . -path \"*/${failsafeTestReports}\" -delete"
 
-void integrationTests(String appserver) {
-  def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
-  sh "find . -path \"*/${failsafeTestReports}\" -delete"
-
-  try {
-    xvfb {
-      withPorts {
-        // Run the maven build
-        sh """./run-clean.sh ./mvnw -e verify \
-                   --batch-mode \
-                   --settings .travis-settings.xml \
-                   -Danimal.sniffer.skip=true \
-                   -DstaticAnalysis=false \
-                   -Dcheckstyle.skip \
-                   -Dappserver=$appserver \
-                   -Dcargo.debug.jvm.args= \
-                   -DskipUnitTests \
-                   -Dmaven.main.skip \
-                   -Dgwt.compiler.skip \
-                   -Dwebdriver.display=${env.DISPLAY} \
-                   -Dwebdriver.type=chrome \
-                   -Dwebdriver.chrome.driver=/opt/chromedriver \
-                   -DallFuncTests
-          """
-          setJUnitPrefix(appserver, failsafeTestReports)
+    try {
+      xvfb {
+        withPorts {
+          // Run the maven build
+          sh """./run-clean.sh ./mvnw -e verify \
+                     --batch-mode \
+                     --settings .travis-settings.xml \
+                     -Danimal.sniffer.skip=true \
+                     -DstaticAnalysis=false \
+                     -Dcheckstyle.skip \
+                     -Dappserver=$appserver \
+                     -Dcargo.debug.jvm.args= \
+                     -DskipUnitTests \
+                     -Dmaven.main.skip \
+                     -Dgwt.compiler.skip \
+                     -Dwebdriver.display=${env.DISPLAY} \
+                     -Dwebdriver.type=chrome \
+                     -Dwebdriver.chrome.driver=/opt/chromedriver \
+                     -DallFuncTests
+               """
+            setJUnitPrefix(appserver, failsafeTestReports)
+        }
       }
-    }
-    // TODO in case of failure, notify culprits via IRC and/or email
-    // https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin#Email-extplugin-PipelineExamples
-    // http://stackoverflow.com/a/39535424/14379
-    // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
-    // possible alternatives: Slack, HipChat, RocketChat, Telegram?
-    notify.successful()
-  } catch(e) {
-    currentBuild.result = 'UNSTABLE'
-    archiveTestFilesIfUnstable()
-    notify.failed()
-    throw e
-  } finally {
-    notify.testResults(appserver.toUpperCase())
-    junit allowEmptyResults: true,
+      // TODO in case of failure, notify culprits via IRC and/or email
+      // https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin#Email-extplugin-PipelineExamples
+      // http://stackoverflow.com/a/39535424/14379
+      // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
+      // possible alternatives: Slack, HipChat, RocketChat, Telegram?
+      notify.successful()
+    } catch(e) {
+      currentBuild.result = 'UNSTABLE'
+      archiveTestFilesIfUnstable()
+      notify.failed()
+      throw e
+    } finally {
+      notify.testResults(appserver.toUpperCase())
+        junit allowEmptyResults: true,
         keepLongStdio: true,
         testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
         testResults: "**/${failsafeTestReports}"
+    }
   }
 }
 
