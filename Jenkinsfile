@@ -107,7 +107,7 @@ timestamps {
               'WILDFLY': 'wildfly8',
               'JBOSSEAP': 'jbosseap6'
           ]
-          map.each { entry ->
+          taskProperties.each { entry ->
             tasks["Integration tests: ${entry.key}"] = {
               info.printNode()
               info.printEnv()
