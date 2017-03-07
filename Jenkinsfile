@@ -132,7 +132,7 @@ void functionalTestTask(String appserver){
     info.printNode()
     info.printEnv()
     debugChromeDriver()
-    unstash 'workspace'
+    // unstash 'workspace'
     // integrationTests(appserver)
   }
 }
