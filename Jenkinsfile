@@ -72,11 +72,15 @@ timestamps {
                       -Dmaven.test.failure.ignore \
              """
           setJUnitPrefix("UNIT", surefireTestReports)
+          junit allowEmptyResults: true,
+              keepLongStdio: true,
+              testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
+              testResults: "**/${surefireTestReports}"
 
           // notify if compile+unit test successful
           notify.testResults("UNIT")
           archive "**/${jarFiles},**/${warFiles}"
-          currentBuild.result = 'SUCCESS'
+          step([ $class: 'JacocoPublisher' ])
         }
 
         stage('stash') {
@@ -86,36 +90,25 @@ timestamps {
         notify.failed()
         currentBuild.result = 'FAILURE'
         throw e
-      } finally {
-        junit allowEmptyResults: true,
-              keepLongStdio: true,
-              testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
-              testResults: "**/${surefireTestReports}"
       }
-    }
-    if (currentBuild.result.equals('FAILURE')){
-      return 1
     }
   }
 
   node {
     ansicolor {
       stage('Integration tests') {
-        try {
-          def tasks = [:]
+        def tasks = [:]
 
-          tasks["Integration tests: WILDFLY"] = {
-            functionalTestTask('wildfly8')
-          }
-          tasks["Integration tests: JBOSSEAP"] = {
-            functionalTestTask('jbosseap6')
-          }
-          tasks.failFast = true
-          parallel tasks
-          step([ $class: 'JacocoPublisher' ])
-        } catch (e) {
-          throw e
+        tasks["Integration tests: WILDFLY"] = {
+          functionalTestTask('wildfly8')
         }
+        tasks["Integration tests: JBOSSEAP"] = {
+          functionalTestTask('jbosseap6')
+        }
+        tasks.failFast = true
+        parallel tasks
+        //currentBuild.result = 'SUCCESS'
+
       }
     }
   }
@@ -148,7 +141,7 @@ void integrationTests(String appserver) {
   def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
   sh "find . -path \"*/${failsafeTestReports}\" -delete"
 
-  try{
+  try {
     xvfb {
       withPorts {
         // Run the maven build
@@ -177,12 +170,12 @@ void integrationTests(String appserver) {
     // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
     // possible alternatives: Slack, HipChat, RocketChat, Telegram?
     notify.successful()
-  }catch(e){
+  } catch(e) {
     currentBuild.result = 'UNSTABLE'
     archiveTestFilesIfUnstable()
     notify.failed()
     throw e
-  }finally{
+  } finally {
     notify.testResults(appserver.toUpperCase())
     junit allowEmptyResults: true,
         keepLongStdio: true,
