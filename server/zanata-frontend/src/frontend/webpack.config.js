@@ -61,7 +61,7 @@ module.exports = {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract(
           'style',
-          'css!csso!postcss!rework!autoprefixer?browsers=last 2 versions'
+          'css!csso!postcss!rework'
         )
       },
 
@@ -73,8 +73,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: ExtractTextPlugin.extract(
           'style',
-          'css!postcss!less',
-          'autoprefixer?browsers=last 2 versions'
+          'css!postcss!less'
         )
       }
     ]

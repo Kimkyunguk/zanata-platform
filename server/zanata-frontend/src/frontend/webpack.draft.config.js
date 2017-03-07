@@ -25,7 +25,7 @@ module.exports = merge.smart(defaultConfig, {
         // prevent css optimisation and minification
         loader: ExtractTextPlugin.extract(
           'style',
-          'css?-minimize!postcss!rework!autoprefixer?browsers=last 2 versions'
+          'css?-minimize!postcss!rework'
         )
       },
       {
@@ -33,8 +33,7 @@ module.exports = merge.smart(defaultConfig, {
         exclude: /node_modules/,
         loader: ExtractTextPlugin.extract(
           'style',
-          'css?-minimize!less',
-          'autoprefixer?browsers=last 2 versions'
+          'css?-minimize!less'
         )
       }
     ]
