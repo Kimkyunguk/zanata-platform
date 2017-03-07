@@ -107,7 +107,7 @@ timestamps {
               'WILDFLY': 'wildfly8',
               'JBOSSEAP': 'jbosseap6'
           ]
-          for ( entry: taskProperties ){
+          for (Map.Entry entry: taskProperties ){
             tasks["Integration tests: ${entry.key}"] = {
               info.printNode()
               info.printEnv()
