@@ -97,25 +97,20 @@ timestamps {
   node {
     ansicolor {
       def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
-      try {
-        stage('Integration tests') {
-          def tasks = [:]
+      stage('Integration tests') {
+        def tasks = [:]
 
-          tasks["Integration tests: WILDFLY"] = {
-            integrationTests('wildfly8')
-          }
-          tasks["Integration tests: JBOSSEAP"] = {
-            integrationTests('jbosseap6')
-          }
-          tasks.failFast = true
-          parallel tasks
+        tasks["Integration tests: WILDFLY"] = {
+          integrationTests('wildfly8')
         }
-      } catch (e) {
-        throw e
-      } finally {
-        unstash 'ws-wildfly8'
-        unstash 'ws-jbosseap6'
-        archive "**/${failsafeTestReports}"
+        tasks["Integration tests: JBOSSEAP"] = {
+          integrationTests('jbosseap6')
+        }
+        tasks.failFast = true
+        parallel tasks
+      }
+
+      stage('report') {
         junit allowEmptyResults: true,
             keepLongStdio: true,
             testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
@@ -178,12 +173,12 @@ void integrationTests(String appserver) {
       // possible alternatives: Slack, HipChat, RocketChat, Telegram?
       notify.successful()
     } catch(e) {
+      echo "ERROR integrationTests(${appserver}): ${e.toString()}"
       currentBuild.result = 'UNSTABLE'
       archiveTestFilesIfUnstable()
       notify.failed()
-      throw e
     } finally {
-      stash name: "ws-${appserver}",  includes: "**/${failsafeTestReports}"
+      archive "**/${failsafeTestReports}"
       notify.testResults(appserver.toUpperCase())
     }
   }
@@ -201,7 +196,7 @@ void withPorts(Closure wrapped) {
 // from https://issues.jenkins-ci.org/browse/JENKINS-27395?focusedCommentId=256459&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-256459
 void setJUnitPrefix(prefix, files) {
   // add prefix to qualified classname
-  sh "find . -path \"*/${files}\" -exec sed -i \"s/\\(<testcase .*classname=['\\\"]\\)\\([a-z]\\)/\\1${prefix}.\\2/g\" '{}' +"
+  sh "find . -path \"*/${files}\" -exec sed -i \"s/\\(<testcase .*classname=['\\\"]\\)\\([a-z]\\)/\\1${prefix.toUpperCase()}.\\2/g\" '{}' +"
 }
 
 void archiveTestFilesIfUnstable() {
