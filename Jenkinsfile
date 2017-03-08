@@ -109,13 +109,6 @@ timestamps {
         tasks.failFast = true
         parallel tasks
       }
-
-      stage('report') {
-        junit allowEmptyResults: true,
-            keepLongStdio: true,
-            testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
-            testResults: "**/${failsafeTestReports}"
-      }
     }
   }
 }
@@ -163,7 +156,6 @@ void integrationTests(String appserver) {
                      -Dwebdriver.chrome.driver=/opt/chromedriver \
                      -DallFuncTests
                """
-            setJUnitPrefix(appserver, failsafeTestReports)
         }
       }
       // TODO in case of failure, notify culprits via IRC and/or email
@@ -178,8 +170,13 @@ void integrationTests(String appserver) {
       archiveTestFilesIfUnstable()
       notify.failed()
     } finally {
+      setJUnitPrefix(appserver, failsafeTestReports)
       archive "**/${failsafeTestReports}"
       notify.testResults(appserver.toUpperCase())
+      junit allowEmptyResults: true,
+	    keepLongStdio: true,
+	    testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
+	    testResults: "**/${failsafeTestReports}"
     }
   }
 }
