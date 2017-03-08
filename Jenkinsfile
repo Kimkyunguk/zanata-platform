@@ -113,12 +113,14 @@ timestamps {
       } catch (e) {
         throw e
       } finally {
+        unstash 'ws-wildfly8'
+        unstash 'ws-jbosseap6'
+        archive "**/${failsafeTestReports}"
         junit allowEmptyResults: true,
             keepLongStdio: true,
             testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
             testResults: "**/${failsafeTestReports}"
       }
-    }
   }
 }
 
@@ -180,7 +182,7 @@ void integrationTests(String appserver) {
       notify.failed()
       throw e
     } finally {
-      archive "**/${failsafeTestReports}"
+      stash name: "ws-${appserver}",  includes: "**/${failsafeTestReports}"
       notify.testResults(appserver.toUpperCase())
     }
   }
