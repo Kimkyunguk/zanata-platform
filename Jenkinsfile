@@ -96,17 +96,27 @@ timestamps {
 
   node {
     ansicolor {
-      stage('Integration tests') {
-        def tasks = [:]
+      def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
+      try {
+        stage('Integration tests') {
+          def tasks = [:]
 
-        tasks["Integration tests: WILDFLY"] = {
-          integrationTests('wildfly8')
+          tasks["Integration tests: WILDFLY"] = {
+            integrationTests('wildfly8')
+          }
+          tasks["Integration tests: JBOSSEAP"] = {
+            integrationTests('jbosseap6')
+          }
+          tasks.failFast = true
+          parallel tasks
         }
-        tasks["Integration tests: JBOSSEAP"] = {
-          integrationTests('jbosseap6')
-        }
-        tasks.failFast = true
-        parallel tasks
+      } catch (e) {
+        throw e
+      } finally {
+        junit allowEmptyResults: true,
+            keepLongStdio: true,
+            testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
+            testResults: "**/${failsafeTestReports}"
       }
     }
   }
@@ -170,12 +180,8 @@ void integrationTests(String appserver) {
       notify.failed()
       throw e
     } finally {
-      archive "**//${failsafeTestReports}"
+      archive "**/${failsafeTestReports}"
       notify.testResults(appserver.toUpperCase())
-        junit allowEmptyResults: true,
-        keepLongStdio: true,
-        testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
-        testResults: "**/${failsafeTestReports}"
     }
   }
 }
