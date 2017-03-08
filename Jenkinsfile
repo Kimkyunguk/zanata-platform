@@ -121,6 +121,7 @@ timestamps {
             testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
             testResults: "**/${failsafeTestReports}"
       }
+    }
   }
 }
 
