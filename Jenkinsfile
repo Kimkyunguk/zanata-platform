@@ -170,6 +170,7 @@ void integrationTests(String appserver) {
       notify.failed()
       throw e
     } finally {
+      archive "**//${failsafeTestReports}"
       notify.testResults(appserver.toUpperCase())
         junit allowEmptyResults: true,
         keepLongStdio: true,
