@@ -134,11 +134,10 @@ void integrationTests(String appserver) {
   node {
     info.printNode()
     info.printEnv()
+    echo "WORKSPACE=${env.WORKSPACE}"
     checkout scm
     debugChromeDriver()
     unstash 'workspace'
-    sh "find . -path \"*/${failsafeTestReports}\" -delete"
-
     try {
       xvfb {
         withPorts {
@@ -172,7 +171,6 @@ void integrationTests(String appserver) {
         excludes: '**/BACKUP-*.log')
     } finally {
       setJUnitPrefix(appserver, failsafeTestReports)
-      // archive "**/${failsafeTestReports}"
       junit([
         testResults: "**/${failsafeTestReports}"
 //      testDataPublishers: [[$class: 'StabilityTestDataPublisher']]
