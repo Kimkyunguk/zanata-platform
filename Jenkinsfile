@@ -72,10 +72,9 @@ timestamps {
                       -Dmaven.test.failure.ignore \
              """
           setJUnitPrefix("UNIT", surefireTestReports)
-          junit allowEmptyResults: true,
-              keepLongStdio: true,
-              testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
+          junit([
               testResults: "**/${surefireTestReports}"
+              ])
 
           // notify if compile+unit test successful
           notify.testResults("UNIT")
@@ -84,7 +83,8 @@ timestamps {
         }
 
         stage('stash') {
-          stash name: 'workspace', includes: '**/target/**'
+//          stash name: 'workspace', includes: '**/target/**'
+          stash name: 'workspace', includes: '**'
         }
       } catch (e) {
         notify.failed()
@@ -94,23 +94,27 @@ timestamps {
     }
   }
 
-  node {
-    ansicolor {
-      def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
-      stage('Integration tests') {
-        def tasks = [:]
+  stage('Integration tests') {
+    def tasks = [:]
 
-        tasks["Integration tests: WILDFLY"] = {
-          integrationTests('wildfly8')
-        }
-        tasks["Integration tests: JBOSSEAP"] = {
-          integrationTests('jbosseap6')
-        }
-        tasks.failFast = true
-        parallel tasks
-      }
+    tasks["Integration tests: WILDFLY"] = {
+      integrationTests('wildfly8')
     }
+    tasks["Integration tests: JBOSSEAP"] = {
+      integrationTests('jbosseap6')
+    }
+    tasks.failFast = true
+    parallel tasks
   }
+
+  // TODO notify finish
+  // TODO in case of failure, notify culprits via IRC and/or email
+  // https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin#Email-extplugin-PipelineExamples
+  // http://stackoverflow.com/a/39535424/14379
+  // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
+  // possible alternatives: Slack, HipChat, RocketChat, Telegram?
+  // notify.successful()
+
 }
 
 // TODO factor these out into zanata-pipeline-library too
@@ -128,7 +132,7 @@ void debugChromeDriver() {
 
 void integrationTests(String appserver) {
   def failsafeTestReports='target/failsafe-reports/TEST-*.xml'
-  node{
+  node {
     info.printNode()
     info.printEnv()
     checkout scm
@@ -154,29 +158,27 @@ void integrationTests(String appserver) {
                      -Dwebdriver.display=${env.DISPLAY} \
                      -Dwebdriver.type=chrome \
                      -Dwebdriver.chrome.driver=/opt/chromedriver \
-                     -DallFuncTests
+
                """
+// TODO              -DallFuncTests
+
         }
       }
-      // TODO in case of failure, notify culprits via IRC and/or email
-      // https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin#Email-extplugin-PipelineExamples
-      // http://stackoverflow.com/a/39535424/14379
-      // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
-      // possible alternatives: Slack, HipChat, RocketChat, Telegram?
-      notify.successful()
     } catch(e) {
+      // Exception will be thrown if maven fails fast, i.e. a test fails
       echo "ERROR integrationTests(${appserver}): ${e.toString()}"
       currentBuild.result = 'UNSTABLE'
-      archiveTestFilesIfUnstable()
-      notify.failed()
+      archive(
+        includes: '*/target/**/*.log,*/target/screenshots/**,**/target/site/xref/**',
+        excludes: '**/BACKUP-*.log')
     } finally {
       setJUnitPrefix(appserver, failsafeTestReports)
-      archive "**/${failsafeTestReports}"
+      // archive "**/${failsafeTestReports}"
+      junit([
+        testResults: "**/${failsafeTestReports}"
+//      testDataPublishers: [[$class: 'StabilityTestDataPublisher']]
+      ])
       notify.testResults(appserver.toUpperCase())
-      junit allowEmptyResults: true,
-	    keepLongStdio: true,
-	    testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
-	    testResults: "**/${failsafeTestReports}"
     }
   }
 }
@@ -196,11 +198,3 @@ void setJUnitPrefix(prefix, files) {
   sh "find . -path \"*/${files}\" -exec sed -i \"s/\\(<testcase .*classname=['\\\"]\\)\\([a-z]\\)/\\1${prefix.toUpperCase()}.\\2/g\" '{}' +"
 }
 
-void archiveTestFilesIfUnstable() {
-  // if tests have failed currentBuild.result will be 'UNSTABLE'
-  if (currentBuild.result != null) {
-    archive(
-        includes: '*/target/**/*.log,*/target/screenshots/**,**/target/site/jacoco/**,**/target/site/xref/**',
-        excludes: '**/BACKUP-*.log')
-  }
-}
