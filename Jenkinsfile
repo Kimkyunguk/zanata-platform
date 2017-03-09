@@ -83,8 +83,7 @@ timestamps {
         }
 
         stage('stash') {
-//          stash name: 'workspace', includes: '**/target/**'
-          stash name: 'workspace', includes: '**'
+          stash name: 'workspace', includes: '**/target/**'
         }
       } catch (e) {
         notify.failed()
