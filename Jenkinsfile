@@ -135,6 +135,7 @@ void integrationTests(String appserver) {
     info.printNode()
     info.printEnv()
     echo "WORKSPACE=${env.WORKSPACE}"
+    sh "find . -path \"*/${failsafeTestReports}\" -delete"
     checkout scm
     debugChromeDriver()
     unstash 'workspace'
