@@ -192,6 +192,8 @@ void withPorts(Closure wrapped) {
 // from https://issues.jenkins-ci.org/browse/JENKINS-27395?focusedCommentId=256459&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-256459
 void setJUnitPrefix(prefix, files) {
   // add prefix to qualified classname
-  sh "find . -path \"*/${files}\" -exec sed -i \"s/\\(<testcase .*classname=['\\\"]\\)\\([a-z]\\)/\\1${prefix.toUpperCase()}.\\2/g\" '{}' +"
+  def reportFiles = findFiles glob: "**/${files}"
+  assert reportFiles.size() > 0 : "Failed to find JUnit report files **/${files}"
+  sh "sed -i \"s/\\(<testcase .*classname=['\\\"]\\)\\([a-z]\\)/\\1${prefix.toUpperCase()}.\\2/g\" ${reportFiles.join(" ")}"
 }
 
