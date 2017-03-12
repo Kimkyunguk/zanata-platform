@@ -135,8 +135,9 @@ void integrationTests(String appserver) {
     info.printNode()
     info.printEnv()
     echo "WORKSPACE=${env.WORKSPACE}"
-    sh "find . -path \"*/${failsafeTestReports}\" -delete"
+    sh "git clean -fdx"
     checkout scm
+    // Clean the workspace
     debugChromeDriver()
     unstash 'workspace'
     try {
