@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import TransUnitSourceHeader from './TransUnitSourceHeader'
-import { Icon } from 'zanata-ui'
 import IconButton from './IconButton'
+import { LoaderText } from '../../components'
 
 /**
  * Panel for the source of the selected phrase
@@ -30,7 +30,7 @@ const TransUnitSourcePanel = React.createClass({
 
     const sources = isLoading
       ? <span className="u-textMeta">
-        <Icon name="loader" />
+        <LoaderText loading />
       </span>
       : this.props.phrase.sources.map(
         (source, index) => {

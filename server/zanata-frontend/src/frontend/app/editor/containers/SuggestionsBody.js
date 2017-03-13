@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import NoSuggestionsPanel from '../components/NoSuggestionsPanel'
 import SuggestionList from '../components/SuggestionList'
+import { LoaderText } from '../../components'
 
 /**
  * Display all suggestions that match the current search.
@@ -44,9 +45,11 @@ const SuggestionsBody = React.createClass({
 
     if (this.props.search.loading) {
       return (
-        <NoSuggestionsPanel
-          icon="loader"
-          message="Loading suggestions" />
+        <div className="u-posCenterCenter u-textEmpty u-textCenter">
+          <div className="u-sMB-1-4">
+            <LoaderText Loading suggestions />
+          </div>
+        </div>
       )
     }
 

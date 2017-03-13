@@ -2,8 +2,8 @@ import React, { PropTypes } from 'react'
 import Textarea from 'react-textarea-autosize'
 import TransUnitTranslationHeader from './TransUnitTranslationHeader'
 import TransUnitTranslationFooter from './TransUnitTranslationFooter'
-import { Icon } from 'zanata-ui'
 import { pick } from 'lodash'
+import { LoaderText } from '../../components'
 
 /**
  * Panel to display and edit transaltions of a phrase.
@@ -129,7 +129,7 @@ const TransUnitTranslationPanel = React.createClass({
 
     if (isLoading) {
       translations = <span className="u-textMeta">
-        <Icon name="loader" />
+        <LoaderText loading />
       </span>
     } else {
       const newTranslations = phrase.newTranslations

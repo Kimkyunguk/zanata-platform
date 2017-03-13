@@ -9,7 +9,7 @@ const NoSuggestionsPanel = React.createClass({
 
   propTypes: {
     message: PropTypes.string.isRequired,
-    icon: PropTypes.oneOf(['loader', 'search', 'suggestions']).isRequired
+    icon: PropTypes.oneOf(['search', 'suggestions']).isRequired
   },
 
   render: function () {
