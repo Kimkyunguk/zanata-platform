@@ -94,16 +94,22 @@ timestamps {
   }
 
   stage('Integration tests') {
-    def tasks = [:]
+    try {
+      def tasks = [:]
 
-    tasks["Integration tests: WILDFLY"] = {
-      integrationTests('wildfly8')
+      tasks["Integration tests: WILDFLY"] = {
+        integrationTests('wildfly8')
+      }
+      tasks["Integration tests: JBOSSEAP"] = {
+        integrationTests('jbosseap6')
+      }
+      tasks.failFast = true
+      parallel tasks
+
+    } catch (e) {
+      // When it cannot find the failfast report
+      echo "ERROR integrationTests: ${e.toString()}"
     }
-    tasks["Integration tests: JBOSSEAP"] = {
-      integrationTests('jbosseap6')
-    }
-    tasks.failFast = true
-    parallel tasks
   }
 
   // TODO notify finish
