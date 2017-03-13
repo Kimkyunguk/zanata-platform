@@ -61,7 +61,7 @@ timestamps {
 
           // Continue building even when test failure
           // Thus -Dmaven.test.failure.ignore is required
-          sh """./run-clean.sh ./mvnw -e clean package jxr:aggregate\
+          sh """./run-clean.sh ./mvnw -e clean install jxr:aggregate\
                       --batch-mode \
                       --settings .travis-settings.xml \
                       --update-snapshots \
@@ -93,24 +93,25 @@ timestamps {
     }
   }
 
-  stage('Integration tests') {
-    try {
-      def tasks = [:]
+  if ( currentBuild.result == null ) {
+    stage('Integration tests') {
+      try {
+        def tasks = [:]
 
-      tasks["Integration tests: WILDFLY"] = {
-        integrationTests('wildfly8')
+        tasks["Integration tests: WILDFLY"] = {
+          integrationTests('wildfly8')
+        }
+        tasks["Integration tests: JBOSSEAP"] = {
+          integrationTests('jbosseap6')
+        }
+        tasks.failFast = true
+        parallel tasks
+        //   notify.successful()
+      } catch (e) {
+        // When it cannot find the failfast report
+        echo "ERROR integrationTests: ${e.toString()}"
       }
-      tasks["Integration tests: JBOSSEAP"] = {
-        integrationTests('jbosseap6')
-      }
-      tasks.failFast = true
-      parallel tasks
-
-    } catch (e) {
-      // When it cannot find the failfast report
-      echo "ERROR integrationTests: ${e.toString()}"
     }
-  }
 
   // TODO notify finish
   // TODO in case of failure, notify culprits via IRC and/or email
@@ -118,8 +119,7 @@ timestamps {
   // http://stackoverflow.com/a/39535424/14379
   // IRC: https://issues.jenkins-ci.org/browse/JENKINS-33922
   // possible alternatives: Slack, HipChat, RocketChat, Telegram?
-  // notify.successful()
-
+  }
 }
 
 // TODO factor these out into zanata-pipeline-library too
@@ -141,10 +141,11 @@ void integrationTests(String appserver) {
     info.printNode()
     info.printEnv()
     echo "WORKSPACE=${env.WORKSPACE}"
-    sh "git clean -fdx"
     checkout scm
     // Clean the workspace
+    sh "git clean -fdx"
     debugChromeDriver()
+
     unstash 'workspace'
     try {
       xvfb {
