@@ -83,7 +83,7 @@ timestamps {
         }
 
         stage('stash') {
-          stash name: 'workspace', includes: '**/target/**'
+          stash name: 'workspace', includes: '**/target/**,.mvn/**,server/zanata-frontend/src/**'
         }
       } catch (e) {
         notify.failed()
