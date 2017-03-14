@@ -21,11 +21,12 @@
 package org.zanata.adapter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Objects;
+
 import org.zanata.adapter.xliff.XliffCommon;
 import org.zanata.adapter.xliff.XliffReader;
 import org.zanata.adapter.xliff.XliffWriter;
@@ -54,7 +55,11 @@ public class XliffAdapter implements FileFormatAdapter {
     public Resource parseDocumentFile(@Nonnull URI fileUri,
                                       @Nonnull LocaleId sourceLocale,
                                       Optional<String> filterParams)
-            throws FileFormatAdapterException, IllegalArgumentException {
+            throws  FileFormatAdapterException,
+                    IllegalArgumentException,
+                    NullPointerException {
+        Objects.requireNonNull(sourceLocale, "Sourcelocale cannot be null");
+        Objects.requireNonNull(fileUri, "FileURI cannot be null");
         XliffReader xliffReader = new XliffReader();
         File tempFile;
         Resource doc;
@@ -73,9 +78,12 @@ public class XliffAdapter implements FileFormatAdapter {
     }
 
     @Override
-    public TranslationsResource parseTranslationFile(URI fileUri,
+    public TranslationsResource parseTranslationFile(@Nonnull URI fileUri,
             LocaleId sourceLocaleId, String localeId, Optional<String> params)
-            throws FileFormatAdapterException, IllegalArgumentException {
+            throws  FileFormatAdapterException,
+                    IllegalArgumentException,
+                    NullPointerException {
+        Objects.requireNonNull(fileUri, "FileURI cannot be null");
         XliffReader xliffReader = new XliffReader();
         TranslationsResource targetDoc;
         File transFile = null;

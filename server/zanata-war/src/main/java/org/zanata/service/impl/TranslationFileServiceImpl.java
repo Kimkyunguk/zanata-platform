@@ -181,7 +181,8 @@ public class TranslationFileServiceImpl implements TranslationFileService {
         try {
             transRes = adapter.parseTranslationFile(tempFile.toURI(),
                     doc.getSourceLocaleId(), localeId, getAdapterParams(doc));
-        } catch (FileFormatAdapterException e) {
+        } catch (FileFormatAdapterException | IllegalArgumentException
+                | NullPointerException e) {
             throw new ZanataServiceException(
                     "Error parsing translation file: " + fileName, e);
         } catch (RuntimeException e) {
@@ -249,7 +250,8 @@ public class TranslationFileServiceImpl implements TranslationFileService {
         try {
             doc = adapter.parseDocumentFile(documentFile, new LocaleId("en"),
                     params);
-        } catch (FileFormatAdapterException e) {
+        } catch (FileFormatAdapterException | IllegalArgumentException
+                | NullPointerException e) {
             throw new ZanataServiceException(
                     "Error parsing document file: " + fileName, e);
         }
