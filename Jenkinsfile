@@ -149,7 +149,11 @@ void integrationTests(String appserver) {
     unstash 'workspace'
     // TODO: Consider touching the target files for test, so it won't recompile
 
-    // see what actually stashed
+    // Are jar files actually in?
+    def jarFiles = jarFiles glob: "**/*.jar"
+    echo "${jarFiles.join('\n')}"
+    echo "${jarFile.size()} jar files"
+
     sh "git clean -fdxn"
     try {
       xvfb {
