@@ -61,7 +61,7 @@ timestamps {
 
           // Continue building even when test failure
           // Thus -Dmaven.test.failure.ignore is required
-          sh """./run-clean.sh ./mvnw -e clean compile \
+          sh """./run-clean.sh ./mvnw -e clean package jxr:aggregate\
                       --batch-mode \
                       --settings .travis-settings.xml \
                       --update-snapshots \
@@ -69,31 +69,17 @@ timestamps {
                       -Dchromefirefox \
                       -DskipFuncTests \
                       -DskipArqTests \
-
+                      -Dmaven.test.failure.ignore \
              """
-        }
-
-        stage('Unit tests') {
-          sh """./run-clean.sh ./mvnw -e package jxr:aggregate \
-                     --batch-mode \
-                     --settings .travis-settings.xml \
-                     --no-snapshot-updates \
-                     -DstaticAnalysis \
-                     -Dchromefirefox \
-                     -DskipFuncTests \
-                     -DskipArqTests \
-                     -Dmaven.test.failure.ignore \
-
-            """
-            setJUnitPrefix("UNIT", surefireTestReports)
-            junit([
+          setJUnitPrefix("UNIT", surefireTestReports)
+          junit([
               testResults: "**/${surefireTestReports}"
               ])
 
-            // notify if compile+unit test successful
-            notify.testResults("UNIT")
-            archive "**/${jarFiles},**/${warFiles}"
-            step([ $class: 'JacocoPublisher' ])
+          // notify if compile+unit test successful
+          notify.testResults("UNIT")
+          archive "**/${jarFiles},**/${warFiles}"
+          step([ $class: 'JacocoPublisher' ])
         }
 
         stage('stash') {
