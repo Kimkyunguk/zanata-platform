@@ -83,7 +83,7 @@ timestamps {
         }
 
         stage('stash') {
-          stash name: 'workspace', includes: '**/target/**,.mvn/**,server/zanata-frontend/src/**'
+          stash name: 'workspace', includes: '**/target/**,.mvn/**,server/zanata-frontend/src/**,server/'
         }
       } catch (e) {
         notify.failed()
@@ -148,6 +148,9 @@ void integrationTests(String appserver) {
 
     unstash 'workspace'
     // TODO: Consider touching the target files for test, so it won't recompile
+
+    // see what actually stashed
+    sh "git clean -fdxn"
     try {
       xvfb {
         withPorts {
