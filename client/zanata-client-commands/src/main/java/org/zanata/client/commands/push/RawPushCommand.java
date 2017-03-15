@@ -412,7 +412,7 @@ public class RawPushCommand extends PushPullCommand<PushOptions> {
             }
         } else {
             // confirmWithUser("This will overwrite existing documents on the server, and delete obsolete documents.\n");
-            confirmWithUser("This will overwrite existing documents on the server.\n");
+            //confirmWithUser("This will overwrite existing documents on the server.\n");
         }
 
         boolean hasErrors = false;
