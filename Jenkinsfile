@@ -150,9 +150,9 @@ void integrationTests(String appserver) {
     // TODO: Consider touching the target files for test, so it won't recompile
 
     // Are jar files actually in?
-    def jarFiles = jarFiles glob: "**/*.jar"
-    echo "${jarFiles.join('\n')}"
-    echo "${jarFile.size()} jar files"
+    def jarFileList = findFiles glob: "**/*.jar"
+    echo "${jarFileList.join('\n')}"
+    echo "${jarFileList.size()} jar files"
 
     sh "git clean -fdxn"
     try {
